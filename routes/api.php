@@ -31,5 +31,8 @@ Route::prefix('v1')->group(function() {
         Route::post('consultations', [ConsultationController::class, 'store']);
 
         Route::get('spots', [SpotController::class, 'index']);
+        Route::get('spots/{spot}', [SpotController::class, 'show']);
+
+        Route::post('vaccinations', [Vaccination::class, 'store']);
     });
 });
