@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SpotController;
+use App\Http\Controllers\Api\VaccinationController;
 use App\Http\Controllers\Api\ConsultationController;
 
 /*
@@ -33,6 +34,6 @@ Route::prefix('v1')->group(function() {
         Route::get('spots', [SpotController::class, 'index']);
         Route::get('spots/{spot}', [SpotController::class, 'show']);
 
-        Route::post('vaccinations', [Vaccination::class, 'store']);
+        Route::post('vaccinations', [VaccinationController::class, 'store']);
     });
 });
