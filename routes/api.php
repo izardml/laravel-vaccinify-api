@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Society;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -18,8 +19,10 @@ use App\Http\Controllers\Api\ConsultationController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('check_token')->get('/user', function (Request $request) {
+    $society = Society::where('login_tokens', $request->token)->first();
+
+    return response()->json($society, 200);
 });
 
 Route::prefix('v1')->group(function() {
@@ -34,6 +37,7 @@ Route::prefix('v1')->group(function() {
         Route::get('spots', [SpotController::class, 'index']);
         Route::get('spots/{spot}', [SpotController::class, 'show']);
 
+        Route::get('vaccinations', [VaccinationController::class, 'index']);
         Route::post('vaccinations', [VaccinationController::class, 'store']);
     });
 });

@@ -11,6 +11,20 @@ class Vaccination extends Model
 
     public $timestamps = false;
     protected $guarded = ['id'];
+    protected $hidden = [
+        'id',
+        'date',
+        'society_id',
+        'spot_id',
+        'vaccine_id',
+        'doctor_id',
+        'officer_id',
+    ];
+    protected $appends = [
+        'vaccination_date',
+        'status',
+        'vaccinator'
+    ];
 
     public function society()
     {
@@ -35,5 +49,20 @@ class Vaccination extends Model
     public function officer()
     {
         return $this->belongsTo(Medical::class, 'officer_id');
+    }
+
+    public function getVaccinationDateAttribute()
+    {
+        return $this->date;
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->vaccine ? 'done' : 'registered';
+    }
+
+    public function getVaccinatorAttribute()
+    {
+        return $this->doctor;
     }
 }

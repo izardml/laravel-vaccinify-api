@@ -12,13 +12,28 @@ use Illuminate\Support\Facades\Validator;
 
 class VaccinationController extends Controller
 {
+    public function index(Request $request)
+    {
+        $society = Society::where('login_tokens', $request->token)->first();
+        $first = Vaccination::where('society_id', $society->id)->with('spot.regional', 'vaccine')->first();
+        $second = Vaccination::where('society_id', $society->id)->with('spot.regional', 'vaccine')->skip(1)->first();
+        
+        if($first) $first->spot->makeHidden('available_vaccines');
+        if($second) $second->spot->makeHidden('available_vaccines');
+
+        $vaccinations = compact('first', 'second');
+
+        return response()->json(compact('vaccinations'), 200);
+    }
+
     public function store(Request $request)
     {
         $society = Society::where('login_tokens', $request->token)->first();
         $consultation = Consultation::where('society_id', $society->id)->first();
-        dd($consultation);
 
-        if($consultation || $consultation->status !== 'accepted') {
+        // dd($consultation && $consultation->status !== 'accepted');
+
+        if($consultation && $consultation->status !== 'accepted') {
             return response()->json([
                 'message' => 'Your consultation must be accepted by doctor before',
             ], 401);
@@ -39,7 +54,7 @@ class VaccinationController extends Controller
         $vaccination = Vaccination::where('society_id', $society->id)->first();
 
         if($vaccination) {
-            $now = Carbon::parse(date('Y-m-d'));
+            $now = Carbon::parse(date($request->date));
             $date = Carbon::parse(date($vaccination->date));
             $diff = $now->diffInDays($date);
 
